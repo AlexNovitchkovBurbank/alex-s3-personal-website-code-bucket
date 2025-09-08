@@ -1,0 +1,49 @@
+service: alex-personal-website-code-bucket
+
+provider:
+  name: aws
+  environment:
+    deploymentBucket: !ImportValue "S3-Personal-Website-Stack-Upload-Bucket"
+  stage: 'np'
+  stackTags:
+    application: "PersonalWebsite"
+    owner: "Alex"
+  #iam:
+    #deploymentRole: arn:iam::${aws:accountId}:role/${self:custom.subsys}--alex-page-${opt:stage}
+  #stackTags: ${file(serverless/tags.yml)}
+
+#params: ${file(serverless/config.yml):params}
+#custom: ${file(serverless/config.yml):custom}
+
+resources:
+  Resources:
+    S3CodeBucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: alex-personal-website-code-${self:provider.stage}
+        CorsConfiguration:
+          CorsRules:
+            - AllowedHeaders:
+                - 'Content-Type'
+              AllowedMethods:
+                - GET
+                - HEAD
+              AllowedOrigins:
+                - '*'
+              ExposedHeaders:
+                - Date
+        PublicAccessBlockConfiguration:
+          RestrictPublicBuckets: true
+          BlockPublicAcls: true
+          BlockPublicPolicy: true
+          IgnorePublicAcls: true
+  Outputs:
+    S3PageBucketArn:
+      Value: !GetAtt S3CodeBucket.Arn
+      Export:
+        Name: S3-Personal-Webiste-Code-Bucket-Arn
+    S3PageBucket:
+      Value: !Ref S3CodeBucket
+      Export:
+        Name: S3-Personal-Webiste-Code-Bucket
+
