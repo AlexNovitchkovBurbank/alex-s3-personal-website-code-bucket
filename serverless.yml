@@ -3,7 +3,8 @@ service: alex-personal-website-code-bucket
 provider:
   name: aws
   environment:
-    deploymentBucket: !ImportValue "S3-Personal-Website-Stack-Upload-Bucket"
+  deploymentBucket:
+    name: alex-personal-website-stack-bucket-np
   stage: 'np'
   stackTags:
     application: "PersonalWebsite"
@@ -37,6 +38,13 @@ resources:
           BlockPublicAcls: true
           BlockPublicPolicy: true
           IgnorePublicAcls: true
+        Tags:
+          - Key: Environment
+            Value: dev
+          - Key: owner
+            Value: Alex
+          - Key: application
+            Value: PersonalWebsite
   Outputs:
     S3PageBucketArn:
       Value: !GetAtt S3CodeBucket.Arn
